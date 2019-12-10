@@ -91,3 +91,18 @@
 .through-line {
   text-decoration: line-through;
 }
+
+.banner {
+  position: relative;
+  .banner-text {
+    position: absolute;
+    top: 5em;
+    right: 1em;
+    font-size: 3em;
+    @include media-breakpoint-down(md) {
+      top: 5em;
+      right: 1em;
+      font-size: 1.2em;
+    }
+  }
+}

@@ -5,7 +5,10 @@
       <NavBar />
     </header>
     <div class="container">
-      <img src="../../assets/images/obv-_design-nf0aL7WgiiU-unsplash (1).jpg" alt="" class="img-fluid">
+      <div class="banner">
+        <img src="../../assets/images/obv-_design-nf0aL7WgiiU-unsplash (1).jpg" alt="" class="img-fluid">
+        <h5 class="text-white banner-text font-weight-bolder font-italic">總能找到最適合您的</h5>
+      </div>
       <div class="row mt-3">
         <div class="col-md-3 text-center pt-4">
           <div class="list-group" id="list-tab" role="tablist">
@@ -270,7 +273,7 @@
           // 只有啟用產品會顯示
           response.data.products.forEach(item => {
             if (item.is_enabled === 1) {
-              vm.products.push(item);              
+              vm.products.push(item);
             }
             vm.isLoading = false;
           });
@@ -286,7 +289,7 @@
         vm.sortProduct = vm.products.filter(function (item, index) {
           if (item.category == tag) {
             return true;
-          }          
+          }
         })
       },
       // 取得購物車內容
