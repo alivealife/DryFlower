@@ -14,7 +14,29 @@
           </li>
         </ul>
         <p class="text-center text-main">個人練習作品</p>
+        <div class="text-center">
+        <a href="#" class="h4 hide-login" @click.prevent="signinCheck"><i class="fas fa-user-cog"></i></a>
+        </div>
       </div>
     </footer>
   </div>
 </template>
+
+<script>
+  export default {
+    methods: {
+      // 驗證有沒有登入，有登入就直接進 Dashboard，沒有就進 Login
+      signinCheck() {
+        const vm = this;
+        const api = `${process.env.APIPATH}/api/user/check`;
+        this.$http.post(api).then((response) => {
+          if (response.data.success) {
+            vm.$router.push('/admin/products');
+          } else {
+            vm.$router.push('/Login');
+          }
+        });
+      },
+    },
+  }
+</script>

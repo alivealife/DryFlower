@@ -7,10 +7,8 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <router-link class="navbar-brand mr-0" href="#" to="/">
-          <h1 class="mb-0 main-icon"><img class="" src="../assets/images/Dry Flower-logo/vector/default-monochrome.svg" alt="Dry Flower"></h1>
+          <h1 class="mb-0"><img src="../assets/images/Dry Flower-logo/vector/default-monochrome.svg" alt="Dry Flower" width="200px"></h1>
         </router-link>
-        <!-- 用 order 來把登入放在右邊 -->
-        <a href="#" class="text-dark h4 order-md-1" @click.prevent="signinCheck"><i class="fas fa-user-cog"></i></a>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item" :class="{'active': pathCheck == '/'}">
@@ -51,5 +49,4 @@
       }
     }
   }
-
 </script>

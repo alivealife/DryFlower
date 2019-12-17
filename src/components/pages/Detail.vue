@@ -81,6 +81,7 @@
       addtoCart(id, qty = 1) {
         const vm = this;
         const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`
+        vm.isLoading = true;
         // 將點擊商品 ID 存入 loadingItem 
         vm.status.loadingItem = id;
         const cart = {
@@ -95,6 +96,7 @@
           // Modal 打開之後將 loadingItem 變回空值
           vm.status.loadingItem = '';
           // 加入購物車後取回購物車的內容
+          vm.isLoading = false;
           vm.getCart();
         });
       },
@@ -126,9 +128,11 @@
       removeCartItem(id) {
         const vm = this;
         const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart/${id}`
+        vm.isLoading = true;
         vm.status.loadingItem = id;
         this.$http.delete(api).then((response) => {
           vm.status.loadingItem = '';
+          vm.isLoading = false;
           // 刪除後重新取得列表
           vm.getCart();
         });

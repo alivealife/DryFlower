@@ -11,6 +11,14 @@
       </div>
       <div class="row mt-3">
         <div class="col-md-3 text-center pt-4">
+          <div class="input-group mb-4 border rounded-pill p-1">
+            <input type="search" placeholder="搜尋..." aria-describedby="button-addon3"
+              class="form-control bg-none border-0 focus-none" v-model="filterText">
+            <div class="input-group-append border-0">
+              <button id="button-addon3" type="button" class="btn btn-link text-main"><i
+                  class="fa fa-search"></i></button>
+            </div>
+          </div>
           <div class="list-group" id="list-tab" role="tablist">
             <a class="list-group-item list-group-item-action active" id="list-all-list" data-toggle="list"
               href="#list-all" role="tab" aria-controls="all">所有商品</a>
@@ -28,9 +36,9 @@
           <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="list-all" role="tabpanel" aria-labelledby="list-all-list">
               <div class="row mt-4">
-                <div class="col-md-4 mb-4" v-for="item in products" :key="item.id">
-                  <div class="card border-0 shadow-sm">
-                    <a href="#" @click.prevent="getProductID(item.id)">
+                <div class="col-md-4 mb-4 card-position" v-for="item in filterArrayALL" :key="item.id">
+                  <div class="card border-0 shadow-sm" @click.prevent="getProductID(item.id)">
+                    <a href="#">
                       <div style="height: 300px; background-size: cover; background-position: center;"
                         :style="{backgroundImage: `url(${item.imageUrl})`}">
                       </div>
@@ -57,20 +65,20 @@
                         <del class="h6 text-secondary" v-if="item.price">原價 {{ item.origin_price }} 元</del>
                         <div class="h5 text-sub" v-if="item.price">現在只要 {{ item.price }} 元</div>
                       </div>
-                      <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
-                        <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
-                        <i class="fas fa-shopping-cart" v-else></i>
-                      </button>
                     </div>
                   </div>
+                  <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
+                    <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
+                    <i class="fas fa-shopping-cart" v-else></i>
+                  </button>
                 </div>
               </div>
             </div>
             <div class="tab-pane fade" id="list-flower" role="tabpanel" aria-labelledby="list-flower-list">
               <div class="row mt-4">
-                <div class="col-md-4 mb-4" v-for="item in sortProduct" :key="item.id">
-                  <div class="card border-0 shadow-sm">
-                    <a href="#" @click.prevent="getProductID(item.id)">
+                <div class="col-md-4 mb-4 card-position" v-for="item in filterArraySort" :key="item.id">
+                  <div class="card border-0 shadow-sm" @click.prevent="getProductID(item.id)">
+                    <a href="#">
                       <div style="height: 300px; background-size: cover; background-position: center;"
                         :style="{backgroundImage: `url(${item.imageUrl})`}">
                       </div>
@@ -97,20 +105,20 @@
                         <del class="h6 text-secondary" v-if="item.price">原價 {{ item.origin_price }} 元</del>
                         <div class="h5 text-sub" v-if="item.price">現在只要 {{ item.price }} 元</div>
                       </div>
-                      <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
-                        <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
-                        <i class="fas fa-shopping-cart" v-else></i>
-                      </button>
                     </div>
                   </div>
+                  <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
+                    <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
+                    <i class="fas fa-shopping-cart" v-else></i>
+                  </button>
                 </div>
               </div>
             </div>
             <div class="tab-pane fade" id="list-bouquet" role="tabpanel" aria-labelledby="list-bouquet-list">
               <div class="row mt-4">
-                <div class="col-md-4 mb-4" v-for="item in sortProduct" :key="item.id">
-                  <div class="card border-0 shadow-sm">
-                    <a href="#" @click.prevent="getProductID(item.id)">
+                <div class="col-md-4 mb-4 card-position" v-for="item in filterArraySort" :key="item.id">
+                  <div class="card border-0 shadow-sm" @click.prevent="getProductID(item.id)">
+                    <a href="#">
                       <div style="height: 300px; background-size: cover; background-position: center;"
                         :style="{backgroundImage: `url(${item.imageUrl})`}">
                       </div>
@@ -137,20 +145,20 @@
                         <del class="h6 text-secondary" v-if="item.price">原價 {{ item.origin_price }} 元</del>
                         <div class="h5 text-sub" v-if="item.price">現在只要 {{ item.price }} 元</div>
                       </div>
-                      <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
-                        <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
-                        <i class="fas fa-shopping-cart" v-else></i>
-                      </button>
                     </div>
                   </div>
+                  <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
+                    <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
+                    <i class="fas fa-shopping-cart" v-else></i>
+                  </button>
                 </div>
               </div>
             </div>
             <div class="tab-pane fade" id="list-flowerpot" role="tabpanel" aria-labelledby="list-flowerpot-list">
               <div class="row mt-4">
-                <div class="col-md-4 mb-4" v-for="item in sortProduct" :key="item.id">
-                  <div class="card border-0 shadow-sm">
-                    <a href="#" @click.prevent="getProductID(item.id)">
+                <div class="col-md-4 mb-4 card-position" v-for="item in filterArraySort" :key="item.id">
+                  <div class="card border-0 shadow-sm" @click.prevent="getProductID(item.id)">
+                    <a href="#">
                       <div style="height: 300px; background-size: cover; background-position: center;"
                         :style="{backgroundImage: `url(${item.imageUrl})`}">
                       </div>
@@ -177,20 +185,20 @@
                         <del class="h6 text-secondary" v-if="item.price">原價 {{ item.origin_price }} 元</del>
                         <div class="h5 text-sub" v-if="item.price">現在只要 {{ item.price }} 元</div>
                       </div>
-                      <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
-                        <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
-                        <i class="fas fa-shopping-cart" v-else></i>
-                      </button>
                     </div>
                   </div>
+                  <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
+                    <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
+                    <i class="fas fa-shopping-cart" v-else></i>
+                  </button>
                 </div>
               </div>
             </div>
             <div class="tab-pane fade" id="list-cactus" role="tabpanel" aria-labelledby="list-cactus-list">
               <div class="row mt-4">
-                <div class="col-md-4 mb-4" v-for="item in sortProduct" :key="item.id">
-                  <div class="card border-0 shadow-sm">
-                    <a href="#" @click.prevent="getProductID(item.id)">
+                <div class="col-md-4 mb-4 card-position" v-for="item in filterArraySort" :key="item.id">
+                  <div class="card border-0 shadow-sm" @click.prevent="getProductID(item.id)">
+                    <a href="#">
                       <div style="height: 300px; background-size: cover; background-position: center;"
                         :style="{backgroundImage: `url(${item.imageUrl})`}">
                       </div>
@@ -217,12 +225,12 @@
                         <del class="h6 text-secondary" v-if="item.price">原價 {{ item.origin_price }} 元</del>
                         <div class="h5 text-sub" v-if="item.price">現在只要 {{ item.price }} 元</div>
                       </div>
-                      <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
-                        <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
-                        <i class="fas fa-shopping-cart" v-else></i>
-                      </button>
                     </div>
                   </div>
+                  <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
+                    <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
+                    <i class="fas fa-shopping-cart" v-else></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -261,6 +269,7 @@
           loadingItem: '',
         },
         isLoading: false,
+        filterText: '',
       }
     },
     methods: {
@@ -287,7 +296,7 @@
       getSort(tag) {
         const vm = this;
         vm.sortProduct = vm.products.filter(function (item, index) {
-          if (item.category == tag) {
+          if (item.category === tag) {
             return true;
           }
         })
@@ -320,6 +329,7 @@
       addtoCart(id, qty = 1) {
         const vm = this;
         const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`
+        vm.isLoading = true;
         // 將點擊商品 ID 存入 loadingItem 
         vm.status.loadingItem = id;
         const cart = {
@@ -333,6 +343,7 @@
         }).then((response) => {
           // Modal 打開之後將 loadingItem 變回空值
           vm.status.loadingItem = '';
+          vm.isLoading = false;
           // 加入購物車後取回購物車的內容
           vm.getCart();
         });
@@ -341,12 +352,32 @@
       removeCartItem(id) {
         const vm = this;
         const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart/${id}`
+        vm.isLoading = true;
         vm.status.loadingItem = id;
         this.$http.delete(api).then((response) => {
           vm.status.loadingItem = '';
+          vm.isLoading = false;
           // 刪除後重新取得列表
           vm.getCart();
         });
+      },
+    },
+    computed: {
+      filterArrayALL() {
+        const vm = this;
+        // 第二個 return 後面的條件如果成立 (item.name 等於 vm.filterText)
+        // 那就會回傳 arrayData 裡面 "單個物件" 給第一個 return 讓它回傳給 filterArray
+        return vm.products.filter(function (item) {
+          return item.title.match(vm.filterText);
+        })
+      },
+      filterArraySort() {
+        const vm = this;
+        // 第二個 return 後面的條件如果成立 (item.name 等於 vm.filterText)
+        // 那就會回傳 arrayData 裡面 "單個物件" 給第一個 return 讓它回傳給 filterArray
+        return vm.sortProduct.filter(function (item) {
+          return item.title.match(vm.filterText);
+        })
       },
     },
     created() {

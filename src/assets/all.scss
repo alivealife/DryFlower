@@ -9,14 +9,6 @@
 // 載入購物車
 @import "./helpers/cart";
 
-.main-icon {
-  width: 200px;
-  @include media-breakpoint-down(md) {
-    max-width: 75%;
-  }
-}
-
-
 .carousel {
   .carousel-item {
     max-height: 500px;
@@ -44,12 +36,21 @@
   transition: all 0.5s ease-out;
   &:hover {
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-    margin: -5px;    
+    margin: -5px;
+    cursor: pointer;    
   }
+
+}
+
+.card-position {
+  position: relative;
   .card-cart{
+    position: absolute;
     border-radius: 50%;
     height: 50px;
     width: 50px;
+    bottom: 1rem;
+    right: 1.5rem;
   }
 }
 
@@ -96,13 +97,28 @@
   position: relative;
   .banner-text {
     position: absolute;
-    top: 5em;
-    right: 1em;
-    font-size: 3em;
+    top: 15rem;
+    right: 1rem;
+    font-size: 3rem;
     @include media-breakpoint-down(md) {
-      top: 5em;
-      right: 1em;
-      font-size: 1.2em;
+      top: 5rem;
+      right: 1rem;
+      font-size: 1.2rem;
     }
   }
+}
+
+.focus-none {
+  outline:0px !important;
+  box-shadow: none !important;
+}
+
+.hide-login {
+  opacity: 0;
+}
+
+.heart-position {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }

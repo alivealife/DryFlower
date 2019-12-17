@@ -1,33 +1,31 @@
 <template>
   <div>
+    <loading :active.sync="isLoading"></loading>
     <header>
       <NavBar />
     </header>
     <div class="container">
       <!-- 幻燈片 -->
+      <div class="text-main text-bold w-100 mb-1 text-truncate font-weight-bolder" @mouseover="stop" @mouseout="lang">
+        {{scrollMsg}}
+      </div>
       <div id="carouselExampleFade" class="carousel slide carousel-fade carousel-zindex" data-ride="carousel">
         <div class="carousel-inner">
           <div class="carousel-item active">
-            <img
-              src="https://images.unsplash.com/photo-1445380066825-3fb2ddb1be4b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1955&q=80"
-              class="d-block w-100">
+            <img src="../../assets/images/camila-cordeiro-736F6KL7l4U-unsplash.jpg" class="d-block w-100">
             <div class="carousel-caption d-none d-md-block caption-position text-left font-italic">
               <h5 class="h2">來自我們的真心</h5>
               <p class="h3">所有的商品都是最高品質</p>
             </div>
           </div>
           <div class="carousel-item">
-            <img
-              src="https://images.unsplash.com/photo-1493232204541-66465694bb23?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1054&q=80"
-              class="d-block w-100">
+            <img src="../../assets/images/kseniya-petukhova-qJy61YwqQB8-unsplash.jpg" class="d-block w-100">
             <div class="carousel-caption d-none d-md-block text-white-50 font-weight-bold">
               <h5 class="h1">Longer but not forever</h5>
             </div>
           </div>
           <div class="carousel-item">
-            <img
-              src="https://images.unsplash.com/photo-1519167820902-d4b564ba4ae2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"
-              class="d-block w-100">
+            <img src="../../assets/images/sharon-mccutcheon-cFufeCC4y8U-unsplash.jpg" class="d-block w-100">
             <div class="carousel-caption d-none d-md-block font-weight-bolder">
               <h5 class="h2">真心獻給您</h5>
               <p class="h3">點綴人生中最重要的時刻</p>
@@ -50,9 +48,9 @@
       </div>
       <!-- 商品 -->
       <div class="row mt-4">
-        <div class="col-md-4 mb-4" v-for="item in randomProducts" :key="item.id">
-          <div class="card border-0 shadow-sm">
-            <a href="#" @click.prevent="getProductID(item.id)">
+        <div class="col-md-4 mb-4 card-position" v-for="item in randomProducts" :key="item.id">
+          <div class="card border-0 shadow-sm" @click.prevent="getProductID(item.id)">
+            <a href="#">
               <div style="height: 300px; background-size: cover; background-position: center;"
                 :style="{backgroundImage: `url(${item.imageUrl})`}">
               </div>
@@ -79,11 +77,19 @@
                 <del class="h6 text-secondary" v-if="item.price">原價 {{ item.origin_price }} 元</del>
                 <div class="h5 text-sub" v-if="item.price">現在只要 {{ item.price }} 元</div>
               </div>
-              <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
-                <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
-                <i class="fas fa-shopping-cart" v-else></i>
-              </button>
             </div>
+          </div>
+          <button type="button" class="btn btn-outline-third ml-auto card-cart" @click="addtoCart(item.id)">
+            <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
+            <i class="fas fa-shopping-cart" v-else></i>
+          </button>
+          <div class="heart-position">
+            <a href="#" class="btn text-white" @click.prevent="removeLove(item)" v-if="changeLove(item) === true">
+              <i class="fas fa-heart fa-2x"></i>
+            </a>
+            <a href="#" class="btn text-white" @click.prevent="addLove(item)" v-else>
+              <i class="far fa-heart fa-2x"></i>
+            </a>
           </div>
         </div>
       </div>
@@ -117,10 +123,16 @@
         product: {},
         // 儲存購物車資料
         cartItem: [],
+        // 儲存我的最愛資料
+        loved: [],
         // 加入購物車符號切換
         status: {
           loadingItem: '',
         },
+        isLoading: false,
+        scrollMsg: "特惠活動： 歡慶開幕，只要在 2020/11/20 前，於結帳時輸入折扣碼 costdown 就可獲得優惠價格。 最新消息：找不到您喜歡的商品嗎？請點選聯絡我們說明您的需求。 ",
+        intervalId: null, //data 定義一個定時器id   
+        test: false
       }
     },
     methods: {
@@ -185,7 +197,8 @@
       // 加入購物車
       addtoCart(id, qty = 1) {
         const vm = this;
-        const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`
+        const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+        vm.isLoading = true;
         // 將點擊商品 ID 存入 loadingItem 
         vm.status.loadingItem = id;
         const cart = {
@@ -200,6 +213,7 @@
           // Modal 打開之後將 loadingItem 變回空值
           vm.status.loadingItem = '';
           // 加入購物車後取回購物車的內容
+          vm.isLoading = false;
           vm.getCart();
         });
       },
@@ -208,20 +222,72 @@
         const vm = this;
         const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart/${id}`
         vm.status.loadingItem = id;
+        vm.isLoading = true;
         this.$http.delete(api).then((response) => {
           vm.status.loadingItem = '';
+          vm.isLoading = false;
           // 刪除後重新取得列表
           vm.getCart();
         });
       },
+      // 跑馬燈用
+      lang() {
+        const vm = this;
+        if (vm.intervalId != null) return;
+        vm.intervalId = setInterval(() => {
+          //得到第一個字元
+          let start = vm.scrollMsg.substring(0, 1)
+          //得到最後一個字元
+          let end = vm.scrollMsg.substring(1)
+          //後面與前面字元連接
+          vm.scrollMsg = end + start
+        }, 100)
+      },
+      //停止計時器     
+      stop() {
+        const vm = this;
+        clearInterval(vm.intervalId)
+        //當我清除定時器之後，重新讓intervalId為null
+        vm.intervalId = null;
+      },
+      // 取得最愛列表
+      getLoved() {
+        const vm = this;
+        vm.loved = JSON.parse(localStorage.getItem('saveLoved')) || [];
+      },
+      // 加入最愛
+      addLove(item) {
+        const vm = this;
+        if (!vm.loved.includes(item)) {
+          vm.loved.push(item);
+          // vm.stared 存進 localStorage
+          localStorage.setItem('saveLoved', JSON.stringify(vm.loved));
+        }
+      },
+      changeLove(item) {
+        const vm = this;
+        if (vm.loved.includes(item)) {
+          return true;
+        }
+      },
+      // 移除最愛
+      removeLove(item) {
+        var vm = this;
+        // 找到要刪除的資料在 vm.stared 的哪一個位置並刪除
+        vm.loved.splice(vm.loved.indexOf(item), 1);
+        // vm.stared 存進 localStorage
+        localStorage.setItem('saveLoved', JSON.stringify(vm.loved));
+      }
     },
     created() {
       this.getProducts();
       this.getCart();
+      this.lang();
+      this.getLoved();
     },
     mounted() {
       this.toggleCart();
-    }
+    },
   }
 
 </script>
