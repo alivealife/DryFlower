@@ -4,7 +4,7 @@
     <!-- 右下角購物車 -->    
     <div class="cart-dropdown">
       <form>
-        <button class="btn btn-secondary btn-cart" type="button" id="dropdownMenuButton" @click="openCart">
+        <button class="btn btn-secondary btn-cart" type="button" @click="openCart">
           <i class="fas fa-shopping-cart fa-lg cart-icon">
             <span class="bg-danger text-white cart-qty">{{cartQty}}</span></i><br>
           購物車

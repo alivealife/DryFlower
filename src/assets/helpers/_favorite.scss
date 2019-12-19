@@ -1,15 +1,14 @@
-.cart-dropdown {
+.favorite-dropdown {
   position: fixed;
   right: 20px;
-  bottom: 25px;
-  z-index: 99;
-  .btn-cart {
-    border-radius: 50px;
-    height: 75px;
+  bottom: 110px;
+  .btn-favorite {
+    border-radius: 50%;
     width: 75px;
-    .cart-icon {
+    height: 75px;
+    .favorite-icon {
       position: relative;
-      .cart-qty {
+      .favorite-qty {
         font-size: 14px;
         position: absolute;
         top: -10px;
@@ -20,19 +19,20 @@
       }
     }
   }
-  .cart-menu {
+  .favorite-menu {
     display: none;
     max-width: 400px;
+    z-index: 1;
     position: fixed;
-    bottom: 100px;
+    bottom: 190px;
     right: 20px;
     border: 1px solid #dee2e6;
     border-radius: 10px;
   }
 }
 
-.cart-dropdown.show {
-  .cart-menu {
+.favorite-dropdown.show {
+  .favorite-menu {
     display: block;
   }
 }

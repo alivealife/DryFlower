@@ -71,6 +71,14 @@
                     <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
                     <i class="fas fa-shopping-cart" v-else></i>
                   </button>
+                  <div class="heart-position">
+                    <a href="#" class="btn text-danger" @click.prevent="removeLove(item)" v-if="changeLove(item)">
+                      <i class="fas fa-heart fa-2x"></i>
+                    </a>
+                    <a href="#" class="btn text-danger" @click.prevent="addLove(item)" v-else>
+                      <i class="far fa-heart fa-2x"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -111,6 +119,14 @@
                     <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
                     <i class="fas fa-shopping-cart" v-else></i>
                   </button>
+                  <div class="heart-position">
+                    <a href="#" class="btn text-danger" @click.prevent="removeLove(item)" v-if="changeLove(item)">
+                      <i class="fas fa-heart fa-2x"></i>
+                    </a>
+                    <a href="#" class="btn text-danger" @click.prevent="addLove(item)" v-else>
+                      <i class="far fa-heart fa-2x"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -151,6 +167,14 @@
                     <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
                     <i class="fas fa-shopping-cart" v-else></i>
                   </button>
+                  <div class="heart-position">
+                    <a href="#" class="btn text-danger" @click.prevent="removeLove(item)" v-if="changeLove(item)">
+                      <i class="fas fa-heart fa-2x"></i>
+                    </a>
+                    <a href="#" class="btn text-danger" @click.prevent="addLove(item)" v-else>
+                      <i class="far fa-heart fa-2x"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -191,6 +215,14 @@
                     <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
                     <i class="fas fa-shopping-cart" v-else></i>
                   </button>
+                  <div class="heart-position">
+                    <a href="#" class="btn text-danger" @click.prevent="removeLove(item)" v-if="changeLove(item)">
+                      <i class="fas fa-heart fa-2x"></i>
+                    </a>
+                    <a href="#" class="btn text-danger" @click.prevent="addLove(item)" v-else>
+                      <i class="far fa-heart fa-2x"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -231,6 +263,14 @@
                     <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
                     <i class="fas fa-shopping-cart" v-else></i>
                   </button>
+                  <div class="heart-position">
+                    <a href="#" class="btn text-danger" @click.prevent="removeLove(item)" v-if="changeLove(item)">
+                      <i class="fas fa-heart fa-2x"></i>
+                    </a>
+                    <a href="#" class="btn text-danger" @click.prevent="addLove(item)" v-else>
+                      <i class="far fa-heart fa-2x"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -241,6 +281,8 @@
     <Footer />
     <ShoppingCart :cart-data="cartItem" :loading-img="status" @opencart="getCart(1)" @removecart="removeCartItem">
     </ShoppingCart>
+    <FavoriteList :favorite-data="favorite" :loading-img="status" @openfavorite="openFavoriteList(1)"
+      @removefavorite="removeLove" @favoriteToCart="addtoCart"></FavoriteList>
   </div>
 </template>
 
@@ -248,6 +290,7 @@
   import NavBar from "../NavBar";
   import Footer from "../Footer";
   import ShoppingCart from '../ShoppingCart';
+  import FavoriteList from "../FavoriteList";
   import $ from "jquery";
 
 
@@ -257,6 +300,7 @@
       NavBar,
       Footer,
       ShoppingCart,
+      FavoriteList
     },
     data() {
       return {
@@ -265,11 +309,14 @@
         sortProduct: [],
         // 儲存購物車資料
         cartItem: [],
+        // 儲存我的最愛資料
+        favorite: [],
         status: {
           loadingItem: '',
         },
         isLoading: false,
         filterText: '',
+        sliceIndex: '',
       }
     },
     methods: {
@@ -361,6 +408,57 @@
           vm.getCart();
         });
       },
+      // 取得最愛列表
+      getfavorite() {
+        const vm = this;
+        vm.favorite = JSON.parse(localStorage.getItem('savefavorite')) || [];
+      },
+      // 加入最愛
+      addLove(item) {
+        const vm = this;
+        if (!vm.favorite.includes(item)) {
+          vm.favorite.push(item);
+          // vm.stared 存進 localStorage
+          localStorage.setItem('savefavorite', JSON.stringify(vm.favorite));
+        }
+      },
+      // 更改愛心標誌判斷
+      changeLove(item) {
+        const vm = this;
+        return vm.favorite.some(el => {
+          const result = item.id === el.id;
+          return result;
+        });
+      },
+      // 移除最愛
+      removeLove(favoriteItem) {
+        var vm = this;
+        // 重新定位要刪除的 index
+        vm.favorite.forEach(function (item, key) {
+          if (favoriteItem.id === item.id) {
+            vm.sliceIndex = key
+          }
+        })
+        vm.favorite.splice(vm.sliceIndex, 1);
+        // vm.stared 存進 localStorage
+        localStorage.setItem('savefavorite', JSON.stringify(vm.favorite));
+      },
+      // 開啟最愛列表
+      openFavoriteList(open) {
+        if (open == 1) {
+          $('.favorite-dropdown').toggleClass('show');
+        }
+      },
+      // 點擊最愛列表以外的地方就關閉選單
+      toggleFavorite() {
+        $(document).on('click', function (e) {
+          // 如果點擊到的地方的父元素沒有 .cart-dropdown 而且 .cart-dropdown 有 .show 時
+          // 就把 .cart-dropdown 的 .show 移除
+          if (!e.target.closest('.favorite-dropdown') && $('.favorite-dropdown').hasClass('show')) {
+            $('.favorite-dropdown').removeClass('show');
+          }
+        });
+      },
     },
     computed: {
       filterArrayALL() {
@@ -383,9 +481,11 @@
     created() {
       this.getProducts();
       this.getCart();
+      this.getfavorite();
     },
     mounted() {
       this.toggleCart();
+      this.toggleFavorite();
     }
   }
 

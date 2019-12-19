@@ -12,7 +12,15 @@
               <img :src="product.imageUrl" class="img-detail img-thumbnail" alt="">
             </div>
             <div class="col-md-6">
-              <h2 class="text-main">{{ product.title }}</h2>
+              <div class="d-flex align-items-center">
+                <h2 class="text-main mb-0">{{ product.title }}</h2>
+                <a href="#" class="btn text-danger" @click.prevent="removeLove(product)" v-if="changeLove(product)">
+                  <i class="fas fa-heart fa-2x"></i>
+                </a>
+                <a href="#" class="btn text-danger" @click.prevent="addLove(product)" v-else>
+                  <i class="far fa-heart fa-2x"></i>
+                </a>                
+              </div>              
               <blockquote class="blockquote mt-3">
                 <p class="mb-0">{{ product.content }}</p>
                 <footer class="blockquote-footer text-right">{{ product.description }}</footer>
@@ -28,16 +36,19 @@
                 </option>
               </select>
               <button type="button" class="btn btn-outline-third mt-3 d-flex ml-auto align-items-center"
-              @click="addtoCart(product.id, product.num)">
+                @click="addtoCart(product.id, product.num)">
                 <i class="fas fa-spinner fa-spin fa-fw" v-if="product.id === status.loadingItem"></i>
-                <i class="fas fa-shopping-cart fa-fw" v-else></i>  加入購物車</button>
+                <i class="fas fa-shopping-cart fa-fw" v-else></i> 加入購物車</button>
             </div>
           </div>
         </div>
       </div>
     </div>
     <Footer />
-    <ShoppingCart :cart-data="cartItem" :loading-img="status" @opencart="getCart(1)" @removecart="removeCartItem"></ShoppingCart>
+    <ShoppingCart :cart-data="cartItem" :loading-img="status" @opencart="getCart(1)" @removecart="removeCartItem">
+    </ShoppingCart>
+    <FavoriteList :favorite-data="favorite" :loading-img="status" @openfavorite="openFavoriteList(1)"
+      @removefavorite="removeLove" @favoriteToCart="addtoCart"></FavoriteList>
   </div>
 </template>
 
@@ -45,6 +56,7 @@
   import NavBar from "../NavBar";
   import Footer from "../Footer";
   import ShoppingCart from '../ShoppingCart'
+  import FavoriteList from "../FavoriteList"
   import $ from "jquery";
 
   export default {
@@ -54,16 +66,20 @@
         product: {},
         // 儲存購物車資料
         cartItem: [],
+        // 儲存我的最愛資料
+        favorite: [],
         isLoading: false,
         status: {
           loadingItem: '',
         },
+        sliceIndex: '',
       }
     },
     components: {
       NavBar,
       Footer,
       ShoppingCart,
+      FavoriteList
     },
     methods: {
       getProduct(id) {
@@ -113,12 +129,12 @@
       },
       // 點擊 dropmenu 以外的地方就關閉選單
       toggleCart() {
-        $(document).on('click', function (e) {  
+        $(document).on('click', function (e) {
           // 如果點擊到的地方的父元素沒有 .cart-dropdown 而且 .cart-dropdown 有 .show 時
           // 就把 .cart-dropdown 的 .show 移除
-          if(!e.target.closest('.cart-dropdown') && $('.cart-dropdown').hasClass('show')){
+          if (!e.target.closest('.cart-dropdown') && $('.cart-dropdown').hasClass('show')) {
             $('.cart-dropdown').removeClass('show');
-          }       
+          }
           // if (e.target.id != 'cart-id') {
           //   $(".cart-menu").toggleClass('show');
           // }
@@ -136,6 +152,56 @@
           // 刪除後重新取得列表
           vm.getCart();
         });
+      }, // 取得最愛列表
+      getfavorite() {
+        const vm = this;
+        vm.favorite = JSON.parse(localStorage.getItem('savefavorite')) || [];
+      },
+      // 加入最愛
+      addLove(item) {
+        const vm = this;
+        if (!vm.favorite.includes(item)) {
+          vm.favorite.push(item);
+          // vm.stared 存進 localStorage
+          localStorage.setItem('savefavorite', JSON.stringify(vm.favorite));
+        }
+      },
+      // 更改愛心標誌判斷
+      changeLove(item) {
+        const vm = this;
+        return vm.favorite.some(el => {
+          const result = item.id === el.id;
+          return result;
+        });
+      },
+      // 移除最愛
+      removeLove(favoriteItem) {
+        var vm = this;
+        // 重新定位要刪除的 index
+        vm.favorite.forEach(function (item, key) {
+          if (favoriteItem.id === item.id) {
+            vm.sliceIndex = key
+          }
+        })
+        vm.favorite.splice(vm.sliceIndex, 1);
+        // vm.stared 存進 localStorage
+        localStorage.setItem('savefavorite', JSON.stringify(vm.favorite));
+      },
+      // 開啟最愛列表
+      openFavoriteList(open) {
+        if (open == 1) {
+          $('.favorite-dropdown').toggleClass('show');
+        }
+      },
+      // 點擊最愛列表以外的地方就關閉選單
+      toggleFavorite() {
+        $(document).on('click', function (e) {
+          // 如果點擊到的地方的父元素沒有 .cart-dropdown 而且 .cart-dropdown 有 .show 時
+          // 就把 .cart-dropdown 的 .show 移除
+          if (!e.target.closest('.favorite-dropdown') && $('.favorite-dropdown').hasClass('show')) {
+            $('.favorite-dropdown').removeClass('show');
+          }
+        });
       },
     },
     created() {
@@ -144,10 +210,12 @@
       this.productId = this.$route.params.productId;
       this.getProduct(this.productId);
       this.getCart();
+      this.getfavorite();
     },
     mounted() {
       // 點擊任意處關閉購物車視窗
       this.toggleCart();
+      this.toggleFavorite();
     }
   }
 

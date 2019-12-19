@@ -84,10 +84,10 @@
             <i class="fas fa-shopping-cart" v-else></i>
           </button>
           <div class="heart-position">
-            <a href="#" class="btn text-white" @click.prevent="removeLove(item)" v-if="changeLove(item) === true">
+            <a href="#" class="btn text-danger" @click.prevent="removeLove(item)" v-if="changeLove(item)">
               <i class="fas fa-heart fa-2x"></i>
             </a>
-            <a href="#" class="btn text-white" @click.prevent="addLove(item)" v-else>
+            <a href="#" class="btn text-danger" @click.prevent="addLove(item)" v-else>
               <i class="far fa-heart fa-2x"></i>
             </a>
           </div>
@@ -97,6 +97,8 @@
     <Footer />
     <ShoppingCart :cart-data="cartItem" :loading-img="status" @opencart="getCart(1)" @removecart="removeCartItem">
     </ShoppingCart>
+    <FavoriteList :favorite-data="favorite" :loading-img="status" @openfavorite="openFavoriteList(1)" @removefavorite="removeLove"
+    @favoriteToCart="addtoCart"></FavoriteList>
   </div>
 </template>
 
@@ -104,6 +106,7 @@
   import NavBar from "../NavBar";
   import Footer from "../Footer";
   import ShoppingCart from '../ShoppingCart'
+  import FavoriteList from "../FavoriteList"
   import $ from "jquery";
 
 
@@ -113,6 +116,7 @@
       NavBar,
       Footer,
       ShoppingCart,
+      FavoriteList
     },
     data() {
       return {
@@ -124,7 +128,7 @@
         // 儲存購物車資料
         cartItem: [],
         // 儲存我的最愛資料
-        loved: [],
+        favorite: [],
         // 加入購物車符號切換
         status: {
           loadingItem: '',
@@ -132,7 +136,7 @@
         isLoading: false,
         scrollMsg: "特惠活動： 歡慶開幕，只要在 2020/11/20 前，於結帳時輸入折扣碼 costdown 就可獲得優惠價格。 最新消息：找不到您喜歡的商品嗎？請點選聯絡我們說明您的需求。 ",
         intervalId: null, //data 定義一個定時器id   
-        test: false
+        sliceIndex: '',
       }
     },
     methods: {
@@ -189,9 +193,6 @@
           if (!e.target.closest('.cart-dropdown') && $('.cart-dropdown').hasClass('show')) {
             $('.cart-dropdown').removeClass('show');
           }
-          // if (e.target.id != 'cart-id') {
-          //   $(".cart-menu").toggleClass('show');
-          // }
         });
       },
       // 加入購物車
@@ -251,42 +252,66 @@
         vm.intervalId = null;
       },
       // 取得最愛列表
-      getLoved() {
+      getfavorite() {
         const vm = this;
-        vm.loved = JSON.parse(localStorage.getItem('saveLoved')) || [];
+        vm.favorite = JSON.parse(localStorage.getItem('savefavorite')) || [];
       },
       // 加入最愛
       addLove(item) {
         const vm = this;
-        if (!vm.loved.includes(item)) {
-          vm.loved.push(item);
+        if (!vm.favorite.includes(item)) {
+          vm.favorite.push(item);
           // vm.stared 存進 localStorage
-          localStorage.setItem('saveLoved', JSON.stringify(vm.loved));
+          localStorage.setItem('savefavorite', JSON.stringify(vm.favorite));
         }
       },
+      // 更改愛心標誌判斷
       changeLove(item) {
         const vm = this;
-        if (vm.loved.includes(item)) {
-          return true;
-        }
+        return vm.favorite.some(el => {
+          const result = item.id === el.id;
+          return result;
+        });
       },
       // 移除最愛
-      removeLove(item) {
+      removeLove(favoriteItem) {
         var vm = this;
-        // 找到要刪除的資料在 vm.stared 的哪一個位置並刪除
-        vm.loved.splice(vm.loved.indexOf(item), 1);
+        // 重新定位要刪除的 index
+        vm.favorite.forEach(function (item, key) {
+          if (favoriteItem.id === item.id) {
+            vm.sliceIndex = key
+          }
+        })
+        vm.favorite.splice(vm.sliceIndex, 1);
         // vm.stared 存進 localStorage
-        localStorage.setItem('saveLoved', JSON.stringify(vm.loved));
-      }
+        localStorage.setItem('savefavorite', JSON.stringify(vm.favorite));
+      },
+      // 開啟最愛列表
+      openFavoriteList(open) {
+        if (open == 1) {
+          $('.favorite-dropdown').toggleClass('show');
+        }
+      },
+      // 點擊最愛列表以外的地方就關閉選單
+      toggleFavorite() {
+        $(document).on('click', function (e) {
+          // 如果點擊到的地方的父元素沒有 .cart-dropdown 而且 .cart-dropdown 有 .show 時
+          // 就把 .cart-dropdown 的 .show 移除
+          if (!e.target.closest('.favorite-dropdown') && $('.favorite-dropdown').hasClass('show')) {
+            $('.favorite-dropdown').removeClass('show');
+          }
+        });
+      },
     },
     created() {
       this.getProducts();
       this.getCart();
       this.lang();
-      this.getLoved();
+      this.getfavorite();
     },
     mounted() {
       this.toggleCart();
+      this.toggleFavorite();
     },
   }
 
