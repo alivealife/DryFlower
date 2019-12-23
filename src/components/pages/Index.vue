@@ -84,12 +84,12 @@
             <i class="fas fa-shopping-cart" v-else></i>
           </button>
           <div class="heart-position">
-            <a href="#" class="btn text-danger" @click.prevent="removeLove(item)" v-if="changeLove(item)">
+            <button type="button" class="btn text-danger" @click.prevent="removeLove(item)" v-if="changeLove(item)">
               <i class="fas fa-heart fa-2x"></i>
-            </a>
-            <a href="#" class="btn text-danger" @click.prevent="addLove(item)" v-else>
+            </button>
+            <button type="button" class="btn text-danger" @click.prevent="addLove(item)" v-else>
               <i class="far fa-heart fa-2x"></i>
-            </a>
+            </button>
           </div>
         </div>
       </div>
